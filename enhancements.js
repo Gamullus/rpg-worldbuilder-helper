@@ -27,9 +27,10 @@
   }
 
   const THEME_KEY = 'rpg-worldbuilder-helper-theme';
+  const THEME_DEFAULT_KEY = 'rpg-worldbuilder-helper-dark-default-v2';
 
   function applyTheme(theme) {
-    const safeTheme = theme === 'dark' ? 'dark' : 'light';
+    const safeTheme = theme === 'light' ? 'light' : 'dark';
     document.body.dataset.theme = safeTheme;
     localStorage.setItem(THEME_KEY, safeTheme);
 
@@ -48,8 +49,11 @@
   }
 
   function initThemeToggle() {
-    const saved = localStorage.getItem(THEME_KEY) || 'light';
-    applyTheme(saved);
+    const migratedToDarkDefault = localStorage.getItem(THEME_DEFAULT_KEY) === 'yes';
+    const saved = localStorage.getItem(THEME_KEY);
+    const initialTheme = migratedToDarkDefault ? (saved || 'dark') : 'dark';
+    localStorage.setItem(THEME_DEFAULT_KEY, 'yes');
+    applyTheme(initialTheme);
 
     const button = document.getElementById('themeToggleBtn');
     if (!button) return;
