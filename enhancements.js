@@ -1,6 +1,13 @@
 // Visual-only enhancements loaded after the main app.
-// Adds soft per-topic progress percentages and a light/dark palette toggle without changing the save format.
+// Adds soft per-topic progress percentages, the custom Lore Kobold image, and a light/dark palette toggle without changing the save format.
 (function () {
+  const LORE_KOBOLD_ICON = 'lore-kobold-icon.png';
+
+  function applyCustomMascot() {
+    const mascot = document.getElementById('mascotImage');
+    if (mascot) mascot.src = LORE_KOBOLD_ICON;
+  }
+
   if (typeof renderCategoryList === 'function') {
     const originalRenderCategoryList = renderCategoryList;
 
@@ -48,7 +55,9 @@
     }
   }
 
-  function initThemeToggle() {
+  function initEnhancements() {
+    applyCustomMascot();
+
     const migratedToDarkDefault = localStorage.getItem(THEME_DEFAULT_KEY) === 'yes';
     const saved = localStorage.getItem(THEME_KEY);
     const initialTheme = migratedToDarkDefault ? (saved || 'dark') : 'dark';
@@ -65,8 +74,8 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initThemeToggle);
+    document.addEventListener('DOMContentLoaded', initEnhancements);
   } else {
-    initThemeToggle();
+    initEnhancements();
   }
 })();
