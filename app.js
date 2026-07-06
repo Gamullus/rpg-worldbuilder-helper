@@ -2,7 +2,7 @@ const APP_VERSION = '1.0.0';
 const STORAGE_KEY = 'rpg-worldbuilder-helper-save-v1';
 const PDF_DATA_START = 'RPG_WORLD_BUILDER_DATA_START';
 const PDF_DATA_END = 'RPG_WORLD_BUILDER_DATA_END';
-const MASCOT_IMAGE = 'lore-kobold.svg';
+const MASCOT_IMAGE = 'lore-kobold-icon.png';
 
 const state = {
   worldName: '',
