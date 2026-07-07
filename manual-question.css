@@ -1,0 +1,117 @@
+/* Manual Add Question modal */
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.manual-question-modal[hidden] {
+  display: none;
+}
+
+.manual-question-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.66);
+  backdrop-filter: blur(8px);
+}
+
+.manual-question-card {
+  width: min(720px, 100%);
+  max-height: min(90vh, 820px);
+  overflow: auto;
+  display: grid;
+  gap: 10px;
+  padding: 22px !important;
+  border-radius: 22px !important;
+}
+
+.manual-question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.manual-question-header h2 {
+  margin: 0;
+}
+
+#manualQuestionCloseBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 999px;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.manual-question-card label {
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.manual-question-card input,
+.manual-question-card select,
+.manual-question-card textarea {
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  border-radius: 12px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+body[data-theme="dark"] .manual-question-card input,
+body[data-theme="dark"] .manual-question-card select,
+body[data-theme="dark"] .manual-question-card textarea {
+  background: #050505;
+  border: 1px solid rgba(220, 214, 247, 0.20);
+  color: #dcd6f7;
+}
+
+body[data-theme="light"] .manual-question-card input,
+body[data-theme="light"] .manual-question-card select,
+body[data-theme="light"] .manual-question-card textarea {
+  background: rgba(239, 211, 155, 0.84);
+  border: 1px solid rgba(58, 43, 43, 0.20);
+  color: #3a2b2b;
+}
+
+.manual-question-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+#addQuestionBtn {
+  font-weight: 800;
+}
+
+@media (max-width: 880px) {
+  .manual-question-modal {
+    align-items: start;
+    padding: 10px;
+  }
+
+  .manual-question-card {
+    max-height: calc(100vh - 20px);
+    padding: 16px !important;
+    border-radius: 18px !important;
+  }
+
+  .manual-question-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .manual-question-actions button {
+    width: 100%;
+  }
+}
