@@ -12,6 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
   <script src="questions.js" defer></script>
+  <script src="answer-seeds.js" defer></script>
   <script src="app.js" defer></script>
   <script src="enhancements.js" defer></script>
 </head>
@@ -94,6 +95,7 @@
           <article id="questionPage" class="question-page">
             <h2 id="questionText"></h2>
             <div id="choiceArea" class="choice-area"></div>
+            <section id="seedArea" class="seed-area" hidden aria-label="Answer seeds"></section>
             <label id="answerLabel" class="answer-label" for="answerText">Your answer</label>
             <textarea id="answerText" rows="10" placeholder="Write what the Lore Kobold should remember..."></textarea>
           </article>
