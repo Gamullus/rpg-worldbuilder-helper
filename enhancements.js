@@ -1,15 +1,37 @@
 // Feature upgrades loaded after the main app.
 // Adds topic hiding, question search, skip/ignore/important flags, answered-only PDF export,
-// better progress accounting, and the light/dark palette toggle.
+// better progress accounting, mobile topic drawer behavior, and the light/dark palette toggle.
 (function () {
   const LORE_KOBOLD_ICON = 'lore-kobold-icon.png';
   const THEME_KEY = 'rpg-worldbuilder-helper-theme';
   const THEME_DEFAULT_KEY = 'rpg-worldbuilder-helper-dark-default-v2';
+  const MOBILE_QUERY = '(max-width: 880px)';
 
   const rawIsAnswered = typeof isAnswered === 'function' ? isAnswered : () => false;
   const rawGetSavePayload = typeof getSavePayload === 'function' ? getSavePayload : () => ({});
   const rawApplySavePayload = typeof applySavePayload === 'function' ? applySavePayload : null;
   const rawRenderQuestion = typeof renderQuestion === 'function' ? renderQuestion : null;
+
+  function isMobileLayout() {
+    return window.matchMedia && window.matchMedia(MOBILE_QUERY).matches;
+  }
+
+  function setTopicsCollapsed(collapsed) {
+    const panel = document.getElementById('sidePanel');
+    const btn = document.getElementById('topicsToggleBtn');
+    if (!panel || !btn) return;
+    panel.classList.toggle('topics-collapsed', collapsed);
+    btn.setAttribute('aria-expanded', String(!collapsed));
+    btn.textContent = collapsed ? '☰ Topics' : '☰';
+    btn.title = collapsed ? 'Show topics' : 'Hide topics';
+  }
+
+  function scrollQuestionIntoView() {
+    if (!isMobileLayout()) return;
+    const journal = document.querySelector('.journal');
+    if (!journal) return;
+    journal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   function ensureFlags() {
     if (!state.questionFlags || typeof state.questionFlags !== 'object') state.questionFlags = {};
@@ -122,6 +144,8 @@
         clearSearch(false);
         renderCategoryList();
         renderQuestion('next');
+        if (isMobileLayout()) setTopicsCollapsed(true);
+        scrollQuestionIntoView();
       });
       els.categoryList.appendChild(btn);
     });
@@ -165,6 +189,7 @@
     if (nextIndex !== -1) {
       state.currentIndex = nextIndex;
       renderQuestion('next');
+      scrollQuestionIntoView();
       return;
     }
 
@@ -178,6 +203,7 @@
         renderCategoryList();
         renderQuestion('next');
         showNotice(`Topic finished. The Lore Kobold opened ${candidate}.`, '');
+        scrollQuestionIntoView();
         return;
       }
     }
@@ -191,6 +217,7 @@
     if (prevIndex !== -1) {
       state.currentIndex = prevIndex;
       renderQuestion('back');
+      scrollQuestionIntoView();
     }
   };
 
@@ -286,6 +313,7 @@
     };
     els.reviewTitle.textContent = titles[mode] || 'Questions';
     renderReview(mode);
+    scrollQuestionIntoView();
   };
 
   renderReview = function enhancedRenderReview(mode) {
@@ -338,6 +366,8 @@
           renderCategoryList();
           closeReview(true);
           syncQuestionControls();
+          if (isMobileLayout()) setTopicsCollapsed(true);
+          scrollQuestionIntoView();
         });
 
         item.append(question, status, answer, edit);
@@ -399,6 +429,8 @@
     localStorage.setItem(THEME_DEFAULT_KEY, 'yes');
     applyTheme(initialTheme);
 
+    if (isMobileLayout()) setTopicsCollapsed(true);
+
     document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
       const nextTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
       applyTheme(nextTheme);
@@ -412,15 +444,20 @@
 
     document.getElementById('topicsToggleBtn')?.addEventListener('click', () => {
       const panel = document.getElementById('sidePanel');
-      const btn = document.getElementById('topicsToggleBtn');
-      if (!panel || !btn) return;
-      panel.classList.toggle('topics-collapsed');
-      const expanded = !panel.classList.contains('topics-collapsed');
-      btn.setAttribute('aria-expanded', String(expanded));
-      btn.textContent = expanded ? '☰' : '☰ Topics';
+      if (!panel) return;
+      setTopicsCollapsed(!panel.classList.contains('topics-collapsed'));
+    });
+
+    const mobileMedia = window.matchMedia ? window.matchMedia(MOBILE_QUERY) : null;
+    mobileMedia?.addEventListener?.('change', event => {
+      if (event.matches) setTopicsCollapsed(true);
+      else setTopicsCollapsed(false);
     });
 
     const search = document.getElementById('questionSearch');
+    search?.addEventListener('focus', () => {
+      if (isMobileLayout()) setTopicsCollapsed(false);
+    });
     search?.addEventListener('input', () => {
       state.searchQuery = search.value.trim();
       if (state.searchQuery) showReview('search');
