@@ -109,10 +109,17 @@
     return newButton;
   }
 
-  function addJsonButton() {
-    if (document.getElementById('exportJsonBtn')) return;
+  function wireJsonButton() {
+    const existing = document.getElementById('exportJsonBtn');
+    if (existing) {
+      const newButton = existing.cloneNode(true);
+      newButton.textContent = 'Download JSON';
+      newButton.addEventListener('click', exportJsonOnly);
+      existing.replaceWith(newButton);
+      return;
+    }
+
     const importJson = document.getElementById('importJsonBtn');
-    const answered = document.getElementById('exportAnsweredBtn');
     if (!importJson) return;
 
     const button = document.createElement('button');
@@ -122,9 +129,6 @@
     button.addEventListener('click', exportJsonOnly);
 
     importJson.parentNode.insertBefore(button, importJson);
-    if (answered && answered.nextSibling !== button) {
-      importJson.parentNode.insertBefore(button, importJson);
-    }
   }
 
   function initSeparatedExports() {
@@ -136,7 +140,7 @@
       exportPdfOnly(`${safeName()}-answered.pdf`, 'answered');
     });
 
-    addJsonButton();
+    wireJsonButton();
   }
 
   if (document.readyState === 'loading') {
