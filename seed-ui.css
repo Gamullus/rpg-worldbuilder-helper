@@ -1,0 +1,94 @@
+/* Answer Seed UI */
+
+.seed-area {
+  margin: 16px 0 18px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(220, 214, 247, 0.14);
+  background: rgba(5, 5, 5, 0.18);
+}
+
+body[data-theme="light"] .seed-area {
+  border-color: rgba(58, 43, 43, 0.16);
+  background: rgba(215, 180, 152, 0.30);
+}
+
+.seed-title {
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+body[data-theme="dark"] .seed-title {
+  color: #dcd6f7;
+}
+
+body[data-theme="light"] .seed-title {
+  color: #3a2b2b;
+}
+
+.seed-help {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+body[data-theme="dark"] .seed-help {
+  color: rgba(220, 214, 247, 0.78);
+}
+
+body[data-theme="light"] .seed-help {
+  color: #876c56;
+}
+
+.seed-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.seed-button {
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+
+body[data-theme="dark"] .seed-button {
+  background: #1b1b1b;
+  border-color: rgba(220, 214, 247, 0.20);
+  color: #dcd6f7;
+}
+
+body[data-theme="dark"] .seed-button:hover,
+body[data-theme="dark"] .seed-button.active-seed {
+  background: #6b5b95;
+  color: #ffffff;
+  border-color: #dcd6f7;
+}
+
+body[data-theme="light"] .seed-button {
+  background: #efd39b;
+  border-color: rgba(58, 43, 43, 0.20);
+  color: #3a2b2b;
+}
+
+body[data-theme="light"] .seed-button:hover,
+body[data-theme="light"] .seed-button.active-seed {
+  background: #6e4747;
+  color: #efd39b;
+  border-color: #3a2b2b;
+}
+
+@media (max-width: 880px) {
+  .seed-area {
+    padding: 12px;
+    margin: 14px 0;
+  }
+
+  .seed-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .seed-button {
+    width: 100%;
+  }
+}
