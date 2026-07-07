@@ -82,6 +82,26 @@ body[data-theme="light"] .manual-question-card textarea {
   color: #3a2b2b;
 }
 
+.manual-question-answer-block {
+  display: grid;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px dashed rgba(220, 214, 247, 0.18);
+}
+
+body[data-theme="light"] .manual-question-answer-block {
+  border-color: rgba(58, 43, 43, 0.22);
+}
+
+.manual-question-hint {
+  margin: -2px 0 2px;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  opacity: 0.78;
+}
+
 .manual-question-actions {
   display: flex;
   justify-content: flex-end;
