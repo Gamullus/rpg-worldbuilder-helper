@@ -4,7 +4,15 @@
   const NOTES_MARKER = '[Your Notes]';
 
   function seedStyles() {
-    return Array.isArray(window.SEED_STYLES) ? window.SEED_STYLES : [];
+    if (Array.isArray(window.SEED_STYLES)) return window.SEED_STYLES;
+    if (typeof SEED_STYLES !== 'undefined' && Array.isArray(SEED_STYLES)) return SEED_STYLES;
+    return [];
+  }
+
+  function seedData() {
+    if (window.ANSWER_SEEDS) return window.ANSWER_SEEDS;
+    if (typeof ANSWER_SEEDS !== 'undefined') return ANSWER_SEEDS;
+    return {};
   }
 
   function seedLabel(styleKey) {
@@ -17,7 +25,8 @@
   }
 
   function getSeeds(question) {
-    return question && window.ANSWER_SEEDS ? window.ANSWER_SEEDS[question.id] : null;
+    const seeds = seedData();
+    return question && seeds ? seeds[question.id] : null;
   }
 
   function getCurrentSeedLabel(text) {
