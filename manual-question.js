@@ -44,10 +44,21 @@
         <div id="manualQuestionOptionsWrap" hidden>
           <label for="manualQuestionOptions">Choices</label>
           <input id="manualQuestionOptions" type="text" placeholder="Separate choices with semicolons. Example: Ally; Rival; Villain; Other" />
+
+          <label for="manualQuestionInitialChoice">Answer choice now</label>
+          <select id="manualQuestionInitialChoice">
+            <option value="">No choice selected</option>
+          </select>
         </div>
 
         <label for="manualQuestionTags">Search tags</label>
         <input id="manualQuestionTags" type="text" placeholder="Separate tags with commas. Example: plane, npc, faction" />
+
+        <div class="manual-question-answer-block">
+          <label for="manualQuestionAnswer">Answer now</label>
+          <p class="manual-question-hint">Optional. If you answer here, the new question is saved as answered immediately.</p>
+          <textarea id="manualQuestionAnswer" rows="7" placeholder="Write the answer now, or leave blank and answer it later..."></textarea>
+        </div>
 
         <div class="manual-question-actions">
           <button id="manualQuestionAddBtn" type="button" class="primary">Add Question</button>
@@ -65,6 +76,7 @@
     modal.querySelector('#manualQuestionNoBtn')?.addEventListener('click', closeManualQuestionModal);
     modal.querySelector('#manualQuestionAddBtn')?.addEventListener('click', addManualQuestion);
     modal.querySelector('#manualQuestionType')?.addEventListener('change', syncManualQuestionType);
+    modal.querySelector('#manualQuestionOptions')?.addEventListener('input', syncManualChoiceOptions);
 
     return modal;
   }
@@ -83,10 +95,30 @@
     });
   }
 
+  function getManualOptions() {
+    const optionText = document.getElementById('manualQuestionOptions')?.value || '';
+    return optionText.split(';').map(item => item.trim()).filter(Boolean);
+  }
+
+  function syncManualChoiceOptions() {
+    const select = document.getElementById('manualQuestionInitialChoice');
+    if (!select) return;
+    const previous = select.value;
+    select.innerHTML = '<option value="">No choice selected</option>';
+    getManualOptions().forEach(optionText => {
+      const option = document.createElement('option');
+      option.value = optionText;
+      option.textContent = optionText;
+      if (optionText === previous) option.selected = true;
+      select.appendChild(option);
+    });
+  }
+
   function syncManualQuestionType() {
     const type = document.getElementById('manualQuestionType')?.value || 'text';
     const wrap = document.getElementById('manualQuestionOptionsWrap');
     if (wrap) wrap.hidden = type !== 'choice-text';
+    syncManualChoiceOptions();
   }
 
   function openManualQuestionModal() {
@@ -105,7 +137,13 @@
   }
 
   function clearManualQuestionForm() {
-    const fields = ['manualQuestionNewCategory', 'manualQuestionText', 'manualQuestionOptions', 'manualQuestionTags'];
+    const fields = [
+      'manualQuestionNewCategory',
+      'manualQuestionText',
+      'manualQuestionOptions',
+      'manualQuestionTags',
+      'manualQuestionAnswer'
+    ];
     fields.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
@@ -122,8 +160,9 @@
     const newCategory = document.getElementById('manualQuestionNewCategory')?.value.trim();
     const questionText = document.getElementById('manualQuestionText')?.value.trim();
     const type = document.getElementById('manualQuestionType')?.value || 'text';
-    const optionText = document.getElementById('manualQuestionOptions')?.value || '';
     const tagText = document.getElementById('manualQuestionTags')?.value || '';
+    const answerText = document.getElementById('manualQuestionAnswer')?.value.trim() || '';
+    const selectedChoice = document.getElementById('manualQuestionInitialChoice')?.value || '';
 
     const category = newCategory || categorySelect?.value || 'Custom Questions';
     if (!questionText) {
@@ -131,9 +170,7 @@
       return;
     }
 
-    const options = type === 'choice-text'
-      ? optionText.split(';').map(item => item.trim()).filter(Boolean)
-      : [];
+    const options = type === 'choice-text' ? getManualOptions() : [];
     const cleanType = type === 'choice-text' && options.length ? 'choice-text' : 'text';
     const tags = tagText.split(',').map(item => slugify(item)).filter(Boolean);
 
@@ -148,6 +185,14 @@
     };
 
     QUESTIONS.push(question);
+
+    const hasAnswer = answerText || (cleanType === 'choice-text' && selectedChoice);
+    if (hasAnswer && typeof ensureAnswer === 'function') {
+      const answer = ensureAnswer(question.id);
+      answer.text = answerText;
+      answer.choice = cleanType === 'choice-text' ? selectedChoice : '';
+    }
+
     state.selectedCategory = category;
     state.currentIndex = questionsInCategory(category).findIndex(item => item.id === question.id);
 
@@ -156,7 +201,9 @@
     if (typeof renderCategoryList === 'function') renderCategoryList();
     if (typeof renderQuestion === 'function') renderQuestion('next');
     if (typeof updateProgress === 'function') updateProgress();
-    if (typeof showNotice === 'function') showNotice('Custom question added. The Lore Kobold has opened it now.', '');
+    if (typeof showNotice === 'function') {
+      showNotice(hasAnswer ? 'Custom question added and answered.' : 'Custom question added. The Lore Kobold has opened it now.', '');
+    }
 
     clearManualQuestionForm();
     closeManualQuestionModal();
